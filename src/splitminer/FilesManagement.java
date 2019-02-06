@@ -301,7 +301,7 @@ public class FilesManagement  {
                
           //final String filename = "Event logs/Logs Reales/Sistema Electoral/electoral.csv";
 
-       final String filename = "P1.txt";
+       final String filename = "trazas3.txt";
 
          //  final String filename = "Logs/T1_ejemplo.txt";
       //final String filename = "Logs/trazas.txt";
