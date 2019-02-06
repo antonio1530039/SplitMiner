@@ -1,0 +1,4 @@
+i;a;b;o
+i;b;a;o
+i;a;b;b;a;a;b;o
+i;b;a;a;b;b;a;o
