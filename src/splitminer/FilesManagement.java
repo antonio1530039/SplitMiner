@@ -303,6 +303,44 @@ public class FilesManagement  {
 
        final String filename = "trazas3.txt";
 
+       /*
+       
+       
+      
+       TRAZAS 3  - SALIDA SIN JOINS
+                [A,b] - 1X
+		[A,f] - 1X
+		[a,A] - 1X
+		[1,c] - 1X
+		[1,d] - 1X
+		[b,1] - 1X
+		[c,e] - 1X
+		[d,e] - 1X
+		[f,d] - 1X
+       
+       
+       
+       TRAZAS 3 / SALIDA CON JOINS (Simbolos raros como ! " son ors)
+                [A,b] - 1X
+		[A,f] - 1X
+		[a,A] - 1X
+		[1,c] - 1
+		[b,1] - 1
+		[c,!] - 1
+		[d,!] - 1
+		[!,e] - 1
+		[1,"] - 1
+		[f,"] - 1
+		[",d] - 1
+      
+       
+       
+       
+       
+       
+       */
+       
+       
          //  final String filename = "Logs/T1_ejemplo.txt";
       //final String filename = "Logs/trazas.txt";
       //

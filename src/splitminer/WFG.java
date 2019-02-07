@@ -24,6 +24,10 @@ public class WFG {
      */
     static Character xorGate = 'A';
     static Character andGate = '1';
+    
+    //Set de visita; en este, se encuentran todos los nodos del grafo
+    HashMap<Character, Integer> nodosVisitados = new HashMap<>();
+    
 
     /*
    Identifica todos los nodos con AUTOLOOP, y remueve los edges del grafo
@@ -457,27 +461,48 @@ public class WFG {
     LinkedList<Character> Gxors = new LinkedList<>();
 
     public void detectarJoins(BPMNModel BPMN) {
-    /*
+    
         System.out.println("\t\tDetectando joins y creando noatación...");
 
         Gands.addAll(BPMN.Gand);
         Gxors.addAll(BPMN.Gxor);
-
+        Gors.addAll(BPMN.Gor);
+        
+        this.nodosVisitados.clear();
+        //Llenar el hashmap de nodos visitados
+        for(Character c : BPMN.T){
+            this.nodosVisitados.put(c, 0);
+        }
+        
+        for(Character c : BPMN.Gand){
+            this.nodosVisitados.put(c, 0);
+        }
+        
+        for(Character c : BPMN.Gor){
+            this.nodosVisitados.put(c, 0);
+        }
+        for(Character c : BPMN.Gxor){
+            this.nodosVisitados.put(c, 0);
+        }
+        
         for (Character gate : BPMN.Gxor) {
             System.out.println("\n\t\tCompuerta XOR: " + gate + " ...Buscando su join...");
             Set<Character> join = findJoin(gate, BPMN);
-            System.out.println("\t\tNodos join candidatos: " + join.toString() + " , intentando crear el join");
             tryToCreateJoin(join, BPMN, gate);
         }
 
         for (Character gate : BPMN.Gand) {
             System.out.println("\n\t\tCompuerta AND: " + gate + " ...Buscando su join...");
             Set<Character> join = findJoin(gate, BPMN);
-            System.out.println("\t\tNodos join candidatos: " + join.toString() + " , intentando crear el join");
             tryToCreateJoin(join, BPMN, gate);
         }
-       */
-
+       
+        for (Character gate : BPMN.Gor) {
+            System.out.println("\n\t\tCompuerta OR: " + gate + " ...Buscando su join...");
+            Set<Character> join = findJoin(gate, BPMN);
+            tryToCreateJoin(join, BPMN, gate);
+        }
+        System.out.println("Nodos visitados: " + this.nodosVisitados.toString());
     }
 
     public boolean isAGateway(BPMNModel BPMN, Character c) {
@@ -494,6 +519,9 @@ public class WFG {
     }
 
     public void tryToCreateJoin(Set<Character> candidates, BPMNModel BPMN, Character gate) {
+        if(candidates == null)
+            return;
+        System.out.println("\t\t\tNodos join candidatos: " + candidates.toString() + " , intentando crear el join");
         if (candidates.size() == 1) {
             Character c = ' ';
             for (Iterator<Character> it = candidates.iterator(); it.hasNext();) {
@@ -508,23 +536,44 @@ public class WFG {
                 type = (char) (Gxors.getLast() + 1);
                 Gxors.add(type);
             }
-            System.out.println("\t\tCreando join de tipo: " + type);
-            //Desconectar los nodos y conectarlos a la nueva compuerta join
-            remplazarEdges(c, type);
-            //Crear nodo del join cuyo sucesor es c
-            WFG.put(type + "," + c, 1);
-            System.out.println("\t\tJoin creado!");
+            System.out.println("\n\n\t\t\tCreando join de tipo: " + type);
+            remplazarEdges(c, type);//Desconectar los nodos y conectarlos a la nueva compuerta join
+            WFG.put(type + "," + c, 1);//Crear nodo del join cuyo sucesor es c
+            this.nodosVisitados.remove(type);
+            this.nodosVisitados.put(type, 1);
+        }else{//Crear join tipo or para cada candidato
+            for(Character c : candidates){
+                Character type = ' ';
+                if(Gors.isEmpty())
+                    type = '!';
+                else
+                    type = (char) (Gors.getLast() + 1);
+                Gors.add(type);
+                remplazarEdges(c, type); //Desconectar nodos y conectarlos a la nueva compuerta join
+                WFG.put(type + "," + c, 1);//Crear nodo del join cuyo sucesor es c
+                this.nodosVisitados.remove(type);
+                this.nodosVisitados.put(type, 1);
+                System.out.println("\n\t\t\tJoin creado!");
+            }
         }
+        System.out.println("\t\t\tJoin creado!");
         return;
     }
 
     public Set<Character> findJoin(Character g, BPMNModel BPMN) {
+        
+        if(this.nodosVisitados.get(g) == 1)
+            return null;
+        
         Set<Character> candidates = new LinkedHashSet<Character>();
         //Obtener sucesores de la compuerta g
         HashSet<Character> sucesores = successors(g);
         boolean flag;
         for (Character c : sucesores) {
             Character actual = c;
+            if(getNumberEdgesToA(c) > 1){
+                candidates.add(c);
+            }
             flag = true;
             while (flag) {
                 //Obtener sucesores del sucesor c de la compuerta g
@@ -533,21 +582,23 @@ public class WFG {
                     flag = false;
                 }
                 for (Character sucesor : sucesoresActual) {
-                    if (isAGateway(BPMN, sucesor)) {
+                    if (isAGateway(BPMN, sucesor) && this.nodosVisitados.get(sucesor) == 0) {
                         Set<Character> candidatesHere = findJoin(sucesor, BPMN);
                         System.out.println("\n\t\t\tCompuerta encontrada: " + sucesor + " ...Buscando su join... (Recursiva)");
-                        System.out.println("\t\t\tNodos join candidatos: " + candidatesHere.toString() + " , intentando crear el join (Recursiva)");
                         tryToCreateJoin(candidatesHere, BPMN, sucesor);
                         flag = false;
-                    } else if (getNumberEdgesToA(sucesor) > 1) {
+                    } else if (getNumberEdgesToA(sucesor) > 1 && this.nodosVisitados.get(sucesor) == 0) {
                         candidates.add(sucesor);
-                        flag = false;
                     }
+                    this.nodosVisitados.remove(sucesor);
+                    this.nodosVisitados.put(sucesor, 1);
                     actual = sucesor;
                 }
 
             }
         }
+        this.nodosVisitados.remove(g);
+        this.nodosVisitados.put(g,1);
         return candidates;
     }
 
@@ -1003,11 +1054,13 @@ public class WFG {
             System.out.print(" ");
         }
 
-        if ((t == '1') || (t == '2') || (t == '3') || (t == '4') || (t == '5')) {
+        if ((t == '1') || (t == '2') || (t == '3') || (t == '4') || (t == '5')) { //Modificar para comparar desde 1-9
             System.out.println("+ AND ");
-        } else if ((t == 'X') || (t == 'Y') || (t == 'Z') || (t == 'W')) {
+        } else if ((t == 'A') || (t == 'B') || (t == 'C') || (t == 'D')|| (t == 'E')|| (t == 'F')) { //Modificar para comparar desde A-Z (en caso de que existan)
             System.out.println("+ XOR ");
-        } else {
+        } else if( t=='!' || t=='"'){
+            System.out.println("+ OR ");
+        }else{
             System.out.println("+ " + t);
         }
 
