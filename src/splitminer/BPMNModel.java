@@ -3,7 +3,7 @@ import java.io.*;
 import java.util.*;
 
 
-public class BPMNModel{
+public class BPMNModel {
 
    public LinkedList<Character> T;
    public Character i;

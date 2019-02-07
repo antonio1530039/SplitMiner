@@ -467,21 +467,21 @@ public class WFG {
         /*
         Modelo 1
         [X,b]
-MMM [X,f]
-MMM [a,X]
-MMM [1,c]
-MMM [1,d]
-MMM [b,1]
-MMM [c,e]
-MMM [d,e]
-MMM [f,1]
-        
+        MMM [X,f]
+        MMM [a,X]
+        MMM [1,c]
+        MMM [1,d]
+        MMM [b,1]
+        MMM [c,e]
+        MMM [d,e]
+        MMM [f,1]
+
         
          */
         WFG.clear();
         
         
-        /*
+        
         //Modelo 1
         
         WFG.put("A,b", 1);
@@ -501,13 +501,15 @@ MMM [f,1]
         BPMN.Gand.add('1');
         BPMN.Gxor.add('A');
         
-         this.nodosVisitados.put('a', 0);
-        this.nodosVisitados.put('b', 0);
-        this.nodosVisitados.put('f', 0);
-        this.nodosVisitados.put('c', 0);
-        this.nodosVisitados.put('d', 0);
-        this.nodosVisitados.put('e', 0);
-         */
+        
+        BPMN.T.clear();
+        BPMN.T.add('a');
+        BPMN.T.add('b');
+        BPMN.T.add('f');
+        BPMN.T.add('c');
+        BPMN.T.add('d');
+        BPMN.T.add('e');
+        
 
  /*
         //Modelo 2
@@ -533,6 +535,13 @@ MMM [f,1]
         this.nodosVisitados.put('c', 0);
         this.nodosVisitados.put('e', 0);
         this.nodosVisitados.put('d', 0);
+        
+         BPMN.T.clear();
+        BPMN.T.add('a');
+        BPMN.T.add('b');
+        BPMN.T.add('c');
+        BPMN.T.add('e');
+        BPMN.T.add('d');
          */
  /*
         //Modelo 3
@@ -568,7 +577,7 @@ MMM [f,1]
         BPMN.Gxor.add('B');
          */
  
- 
+ /*
         //Modelo 4
         WFG.put("a,b", 1);
         WFG.put("A,c", 1);
@@ -591,17 +600,19 @@ MMM [f,1]
         BPMN.Gxor.add('A');
         BPMN.Gxor.add('B');
         
-        this.nodosVisitados.put('a', 0);
-        this.nodosVisitados.put('b', 0);
-        this.nodosVisitados.put('c', 0);
-        this.nodosVisitados.put('h', 0);
-        this.nodosVisitados.put('d', 0);
-        this.nodosVisitados.put('e', 0);
-        this.nodosVisitados.put('f', 0);
-        this.nodosVisitados.put('g', 0);
-        this.nodosVisitados.put('i', 0);
-        this.nodosVisitados.put('j', 0);
-
+        BPMN.T.clear();
+        BPMN.T.add('a');
+        BPMN.T.add('b');
+        BPMN.T.add('c');
+        BPMN.T.add('d');
+        BPMN.T.add('e');
+        BPMN.T.add('h');
+        BPMN.T.add('i');
+        BPMN.T.add('j');
+        BPMN.T.add('g');
+        BPMN.T.add('f');
+       
+*/
         
  /*
         //Modelo 5
@@ -648,154 +659,16 @@ MMM [f,1]
         //for (Character c : BPMN.T) {
           //  this.nodosVisitados.put(c, 0);
         //}
+        
+        JoinsFinder jf = new JoinsFinder(BPMN, this);
+        
+        jf.findNotation();
+        
+        System.out.println("Notacion: " + jf.notation);
 
-        for (Character c : BPMN.Gand) {
-            this.nodosVisitados.put(c, 0);
-        }
-
-        for (Character c : BPMN.Gor) {
-            this.nodosVisitados.put(c, 0);
-        }
-        for (Character c : BPMN.Gxor) {
-            this.nodosVisitados.put(c, 0);
-        }
-
-        for (Character gate : BPMN.Gxor) {
-            System.out.println("\n\t\tCompuerta XOR: " + gate + " ...Buscando su join...");
-            Set<Character> join = findJoin(gate, BPMN);
-            tryToCreateJoin(join, BPMN, gate);
-        }
-
-        for (Character gate : BPMN.Gand) {
-            System.out.println("\n\t\tCompuerta AND: " + gate + " ...Buscando su join...");
-            Set<Character> join = findJoin(gate, BPMN);
-            tryToCreateJoin(join, BPMN, gate);
-        }
-
-        for (Character gate : BPMN.Gor) {
-            System.out.println("\n\t\tCompuerta OR: " + gate + " ...Buscando su join...");
-            Set<Character> join = findJoin(gate, BPMN);
-            tryToCreateJoin(join, BPMN, gate);
-        }
-        System.out.println("Nodos visitados: " + this.nodosVisitados.toString());
+        
     }
 
-    public boolean isAGateway(BPMNModel BPMN, Character c) {
-        for (Character gand : BPMN.Gand) {
-            if (gand == c) {
-                return true;
-            }
-        }
-        for (Character gor : BPMN.Gor) {
-            if (gor == c) {
-                return true;
-            }
-        }
-        for (Character gxor : BPMN.Gxor) {
-            if (gxor == c) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public void tryToCreateJoin(Set<Character> candidates, BPMNModel BPMN, Character gate) {
-        if (candidates == null) {
-            return;
-        }
-        System.out.println("\t\t\tNodos join candidatos: " + candidates.toString() + " , intentando crear el join");
-        if (candidates.size() == 1) {
-            Character c = ' ';
-            for (Iterator<Character> it = candidates.iterator(); it.hasNext();) {
-                c = it.next();
-            }
-            Character type = ' ';
-            if (Gands.contains(gate)) {
-                type = (char) (Gands.getLast() + 1);
-                Gands.add(type);
-            }
-            if (Gxors.contains(gate)) {
-                type = (char) (Gxors.getLast() + 1);
-                Gxors.add(type);
-            }
-            System.out.println("\n\n\t\t\tJoin de tipo: " + type + " creado");
-            remplazarEdges(c, type);//Desconectar los nodos y conectarlos a la nueva compuerta join
-            WFG.put(type + "," + c, 1);//Crear nodo del join cuyo sucesor es c
-            this.nodosVisitados.remove(type);
-            this.nodosVisitados.put(type, 1);
-        } else {//Crear join tipo or para cada candidato
-            for (Character c : candidates) {
-                Character type;
-                if (Gors.isEmpty()) {
-                    type = '!';
-                } else {
-                    type = (char) (Gors.getLast() + 1);
-                }
-                Gors.add(type);
-                remplazarEdges(c, type); //Desconectar nodos y conectarlos a la nueva compuerta join
-                WFG.put(type + "," + c, 1);//Crear nodo del join cuyo sucesor es c
-                this.nodosVisitados.remove(type);
-                this.nodosVisitados.put(type, 1);
-                System.out.println("\n\t\t\tJoin de tipo: " + type + " creado");
-            }
-        }
-        return;
-    }
-
-    public Set<Character> findJoin(Character g, BPMNModel BPMN) {
-
-        if (this.nodosVisitados.get(g) == 1) {
-            return null;
-        }
-
-        this.nodosVisitados.remove(g);
-        this.nodosVisitados.put(g, 1);
-
-        Set<Character> candidates = new LinkedHashSet<Character>();
-        //Obtener sucesores de la compuerta g
-        HashSet<Character> sucesores = successors(g);
-        boolean flag;
-        for (Character c : sucesores) {
-            Character actual = c;
-
-            if (isAGateway(BPMN, c) && this.nodosVisitados.get(c) == 0) {
-                Set<Character> candidatesHere = findJoin(c, BPMN);
-                System.out.println("\n\t\t\tCompuerta encontrada: " + c + " ...Buscando su join... (Recursiva)");
-                tryToCreateJoin(candidatesHere, BPMN, c);
-            } else if (getNumberEdgesToA(c) > 1 && this.nodosVisitados.get(c) == 0) {
-                candidates.add(c);
-            }
-            flag = true;
-            while (flag) {
-                //Obtener sucesores del sucesor c de la compuerta g
-                HashSet<Character> sucesoresActual = successors(actual);
-                if (sucesoresActual.isEmpty()) {
-                    flag = false;
-                }
-                for (Character sucesor : sucesoresActual) {
-                    System.out.println("Sucesor:" + sucesor);
-                    if (this.nodosVisitados.get(sucesor) == 0) {
-                        if (isAGateway(BPMN, sucesor)) {
-                            Set<Character> candidatesHere = findJoin(sucesor, BPMN);
-                            System.out.println("\n\t\t\tCompuerta encontrada: " + sucesor + " ...Buscando su join... (Recursiva)");
-                            tryToCreateJoin(candidatesHere, BPMN, sucesor);
-                            flag = false;
-                        } else if (getNumberEdgesToA(sucesor) > 1) {
-                            candidates.add(sucesor);
-                        }
-                        this.nodosVisitados.remove(sucesor);
-                        this.nodosVisitados.put(sucesor, 1);
-                    }else{
-                        flag = false;
-                        break;
-                    }
-                    actual = sucesor;
-                }
-            }
-        }
-
-        return candidates;
-    }
 
     //Encontrar el numero de edges entrantes ( *a )
     public int getNumberEdgesToA(Character a) {
