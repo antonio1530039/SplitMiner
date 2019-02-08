@@ -25,8 +25,6 @@ public class WFG {
     static Character xorGate = 'A';
     static Character andGate = '1';
 
-    //Set de visita; en este, se encuentran todos los nodos del grafo
-    HashMap<Character, Integer> nodosVisitados = new HashMap<>();
 
 
     /*
@@ -456,18 +454,19 @@ public class WFG {
 
     }
 
-    LinkedList<Character> Gands = new LinkedList<>();
-    LinkedList<Character> Gors = new LinkedList<>();
-    LinkedList<Character> Gxors = new LinkedList<>();
 
     public void detectarJoins(BPMNModel BPMN) {
 
         System.out.println("\t\tDetectando joins y creando noatación...");
 
         //Lo siguiente es a manera de prueba.....................
+        
         WFG.clear();
-        /*
+        
+        
+        
         //Modelo 1
+        
         WFG.put("A,b", 1);
         WFG.put("A,f", 1);
         WFG.put("a,A", 1);
@@ -510,8 +509,7 @@ public class WFG {
 		[2,e] - 1
         */
 
-        
-        
+       
         
         
         /*
@@ -686,7 +684,7 @@ public class WFG {
         */
     
         /*
-        //Modelo 5
+        //Modelo 5 - ciclos
         WFG.put("1,b", 1);
         WFG.put("1,c", 1);
         WFG.put("a,1", 1);
@@ -721,10 +719,6 @@ public class WFG {
         //.....................
         ///
         
-
-        Gands.addAll(BPMN.Gand);
-        Gxors.addAll(BPMN.Gxor);
-        Gors.addAll(BPMN.Gor);
 
         JoinsFinder jf = new JoinsFinder(BPMN, this);
         

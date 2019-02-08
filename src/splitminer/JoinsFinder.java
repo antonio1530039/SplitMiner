@@ -54,14 +54,13 @@ public class JoinsFinder {
 
     public Character FindNext(StringBuilder notation, Character s) {
         //si el nodo actual es una tarea, regresamos su sucesor y terminamos
-
+        System.out.println("Notation: " + notation.toString() + " s: " + s);
         if (BPMN.T.contains(s)) { //Es una tarea
             notation.append(" " + s);
             cloneTask.remove(s); //ELIMINAR EN LA LISTA DE TAREAS QUE ESTA TAREA YA SE CONSIDERO
             return sucesor(s);
         } else { //Es una compuerta
-            System.out.println("Compuerta encontrada...");
-
+            System.out.println(notation);
             String type = "";
             if (BPMN.Gand.contains(s)) {
                 type = "AND";
@@ -69,6 +68,8 @@ public class JoinsFinder {
                 type = "XOR";
             } else if (type.equals("")) {
                 return '0';        //caso en el que no es ni compuerta ni tarea, este caso se espera que no ocurra
+            }else if(BPMN.Gor.contains(s)){
+                type = "OR";
             }
             //se creara una notacion de compuerta
             notation.append(" " + type + "{ ");
@@ -114,7 +115,7 @@ public class JoinsFinder {
                         WFG.WFG.remove(a + "," + cierre); //eliminar la antigua conexion
                         WFG.WFG.put(a + "," + symbol, 1); //nueva coneccion a la compuerta
                     }
-
+                    System.out.println("And "+symbol+" creado");
                     //Conectar la nueva compuerta al nodo cierre
                     WFG.WFG.put(symbol + "," + cierre, 1);
 
@@ -131,13 +132,14 @@ public class JoinsFinder {
                     } else {
                         orSymbol = (char) (BPMN.Gor.getLast() + 1);
                     }
+                    BPMN.Gor.add(orSymbol);
                     Character cierre = entry.getKey(); //Recuperar cierre
                     LinkedList<Character> anteriores = entry.getValue();//Recuperar lista de los anteriores del cierre
                     for (Character a : anteriores) { //Para cada anterior en la lista de anteriores, desconectar del cierre y conectar a la nueva compuerta
                         WFG.WFG.remove(a + "," + cierre); //eliminar la antigua conexion
                         WFG.WFG.put(a + "," + orSymbol, 1); //nueva coneccion a la compuerta
                     }
-
+                    System.out.println("Or "+orSymbol+" creado");
                     //Conectar la nueva compuerta al nodo cierre
                     WFG.WFG.put(orSymbol + "," + cierre, 1);
                 }
@@ -151,7 +153,6 @@ public class JoinsFinder {
     //para el símbolo de entrada que es una compuerta, explora cada rama     
     public void resolve(Character gate, LinkedList<String> ramas, HashMap<Character, LinkedList<Character>> vals) {
 
-        //PENDIENTE, CASO DONDE LA XOR TIENE LA RAMA VACIA
         HashSet<Character> sigs = WFG.successors(gate);
         for (Character t : sigs) {
             //String notationRama = ""; //la notacion de esta rama 
@@ -187,7 +188,7 @@ public class JoinsFinder {
 
     public Character explorarRama(Character nodo, StringBuilder notationRama, StringBuilder last) {
         Character s = sucesor(nodo);
-        if (s == null) {
+        if (s == null) { //Cuando un nodo ya no tiene sucesor
             return ' ';    //PENDIENTE DE REVISAR
         }
         Character cierre;
@@ -201,6 +202,9 @@ public class JoinsFinder {
             while(WFG.getNumberEdgesToA(cierre) <= 1){
                 s = cierre;
                 cierre = FindNext(notationRama, cierre);
+                
+                //if(cierre == '0' )
+                  //  cierre = cloneTask.get(0); 
             }
             last.append(""+s);
         }
@@ -220,7 +224,7 @@ public class JoinsFinder {
             }
         }
         return null;
-
     }
+    
 
 }
