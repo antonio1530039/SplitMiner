@@ -464,26 +464,10 @@ public class WFG {
 
         System.out.println("\t\tDetectando joins y creando noatación...");
 
-        /*
-        Modelo 1
-        [X,b]
-        MMM [X,f]
-        MMM [a,X]
-        MMM [1,c]
-        MMM [1,d]
-        MMM [b,1]
-        MMM [c,e]
-        MMM [d,e]
-        MMM [f,1]
-
-        
-         */
+        //Lo siguiente es a manera de prueba.....................
         WFG.clear();
-        
-        
         /*
         //Modelo 1
-        
         WFG.put("A,b", 1);
         WFG.put("A,f", 1);
         WFG.put("a,A", 1);
@@ -511,9 +495,26 @@ public class WFG {
         BPMN.T.add('e');
         
         BPMN.i = 'a';
+        /*
+        Notation:  a XOR{  b, f} AND{  c, d} e
+		[A,b] - 1
+		[A,f] - 1
+		[a,A] - 1
+		[1,c] - 1
+		[1,d] - 1
+		[b,B] - 1
+		[f,B] - 1
+		[B,1] - 1
+		[c,2] - 1
+		[d,2] - 1
+		[2,e] - 1
+        */
+
         
-*/
- /*
+        
+        
+        
+        /*
         //Modelo 2
         WFG.put("1,b", 1);
         WFG.put("1,c", 1);
@@ -534,15 +535,40 @@ public class WFG {
         
 
         
-         BPMN.T.clear();
+        BPMN.T.clear();
         BPMN.T.add('a');
         BPMN.T.add('b');
         BPMN.T.add('c');
         BPMN.T.add('e');
         BPMN.T.add('d');
         BPMN.i = 'a';
-         */
+        
+        /*
+        Notation:  a XOR{  AND{  b, c}, e} d
+		[1,b] - 1
+		[1,c] - 1
+		[A,1] - 1
+		[A,e] - 1
+		[a,A] - 1
+		[b,2] - 1
+		[c,2] - 1
+		[2,d] - 1
+		[b,B] - 1
+		[e,B] - 1
+		[B,d] - 1
+        
+        
+        */
  
+ 
+ 
+ 
+ 
+ 
+        
+        
+        
+         /*
         //Modelo 3
         WFG.put("a,b", 1);
         WFG.put("b,c", 1);
@@ -578,9 +604,31 @@ public class WFG {
         BPMN.T.add('g');
         BPMN.T.add('f');
         BPMN.i = 'a';
-         
+        /*
+        Notation:  a b c XOR{ , h} d e XOR{ , g} f
+		[a,b] - 1
+		[b,c] - 1
+		[A,h] - 1
+		[c,A] - 1
+		[d,e] - 1
+		[B,g] - 1
+		[e,B] - 1
+		[A,C] - 1
+		[h,C] - 1
+		[C,d] - 1
+		[B,D] - 1
+		[g,D] - 1
+		[D,f] - 1        
+        */
  
- /*
+ 
+        
+        
+        
+        
+        
+        
+        /*
         //Modelo 4
         WFG.put("a,b", 1);
         WFG.put("A,c", 1);
@@ -614,10 +662,30 @@ public class WFG {
         BPMN.T.add('j');
         BPMN.T.add('g');
         BPMN.T.add('f');
-       
-*/
+        BPMN.i = 'a';
         
- /*
+        /* 
+        
+        Notation:  a b XOR{  c d, h i j} e XOR{ , g} f
+		[a,b] - 1
+		[A,c] - 1
+		[A,h] - 1
+		[b,A] - 1
+		[c,d] - 1
+		[B,g] - 1
+		[e,B] - 1
+		[h,i] - 1
+		[i,j] - 1
+		[d,C] - 1
+		[j,C] - 1
+		[C,e] - 1
+		[B,D] - 1
+		[g,D] - 1
+		[D,f] - 1
+        
+        */
+    
+        /*
         //Modelo 5
         WFG.put("1,b", 1);
         WFG.put("1,c", 1);
@@ -634,41 +702,34 @@ public class WFG {
         BPMN.Gand.clear();
         BPMN.Gor.clear();
         BPMN.Gxor.clear();
-        
-        
+
         BPMN.Gand.add('1');
         BPMN.Gxor.add('A');
  
-        this.nodosVisitados.put('a', 0);
-        this.nodosVisitados.put('b', 0);
-        this.nodosVisitados.put('c', 0);
-        this.nodosVisitados.put('d', 0);
-        this.nodosVisitados.put('e', 0);
-        this.nodosVisitados.put('f', 0);
- 
-           */
+
+        BPMN.T.clear();
+        BPMN.T.add('a');
+        BPMN.T.add('b');
+        BPMN.T.add('c');
+        BPMN.T.add('d');
+        BPMN.T.add('e');
+        BPMN.T.add('f');
+        BPMN.i = 'a';
+        */
         
         
-        
-        
+        //.....................
         ///
         
 
         Gands.addAll(BPMN.Gand);
         Gxors.addAll(BPMN.Gxor);
         Gors.addAll(BPMN.Gor);
-        //this.nodosVisitados.clear();
-        //Llenar el hashmap de nodos visitados
-        //for (Character c : BPMN.T) {
-          //  this.nodosVisitados.put(c, 0);
-        //}
-        
+
         JoinsFinder jf = new JoinsFinder(BPMN, this);
         
-        jf.findNotation();
-        
-        System.out.println("Notacion: " + jf.notation);
-
+        String notation = jf.findNotation();
+        System.out.println("Notation: " + notation);
         
     }
 
