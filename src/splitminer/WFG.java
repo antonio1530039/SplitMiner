@@ -481,7 +481,7 @@ public class WFG {
         WFG.clear();
         
         
-        
+        /*
         //Modelo 1
         
         WFG.put("A,b", 1);
@@ -510,7 +510,9 @@ public class WFG {
         BPMN.T.add('d');
         BPMN.T.add('e');
         
-
+        BPMN.i = 'a';
+        
+*/
  /*
         //Modelo 2
         WFG.put("1,b", 1);
@@ -530,11 +532,7 @@ public class WFG {
         BPMN.Gand.add('1');
         BPMN.Gxor.add('A');
         
-        this.nodosVisitados.put('a', 0);
-        this.nodosVisitados.put('b', 0);
-        this.nodosVisitados.put('c', 0);
-        this.nodosVisitados.put('e', 0);
-        this.nodosVisitados.put('d', 0);
+
         
          BPMN.T.clear();
         BPMN.T.add('a');
@@ -542,8 +540,9 @@ public class WFG {
         BPMN.T.add('c');
         BPMN.T.add('e');
         BPMN.T.add('d');
+        BPMN.i = 'a';
          */
- /*
+ 
         //Modelo 3
         WFG.put("a,b", 1);
         WFG.put("b,c", 1);
@@ -564,18 +563,22 @@ public class WFG {
         BPMN.Gxor.clear();
         
         
-        this.nodosVisitados.put('a', 0);
-        this.nodosVisitados.put('b', 0);
-        this.nodosVisitados.put('c', 0);
-        this.nodosVisitados.put('h', 0);
-        this.nodosVisitados.put('d', 0);
-        this.nodosVisitados.put('e', 0);
-        this.nodosVisitados.put('g', 0);
-        this.nodosVisitados.put('f', 0);
         
         BPMN.Gxor.add('A');
         BPMN.Gxor.add('B');
-         */
+        
+        
+        BPMN.T.clear();
+        BPMN.T.add('a');
+        BPMN.T.add('b');
+        BPMN.T.add('c');
+        BPMN.T.add('h');
+        BPMN.T.add('d');
+        BPMN.T.add('e');
+        BPMN.T.add('g');
+        BPMN.T.add('f');
+        BPMN.i = 'a';
+         
  
  /*
         //Modelo 4
@@ -1108,6 +1111,25 @@ public class WFG {
         }
 
         return sucesores;
+    }
+    
+    
+    //all nodes before 'task', given the current pruened WFG
+    public HashSet<Character> antecessors(Character task) {
+
+        HashSet<Character> antecesores = new LinkedHashSet<Character>();
+
+        for (Map.Entry<String, Integer> entry : WFG.entrySet()) {
+            String key = entry.getKey();
+            String vals[] = key.split(",");
+            Character c = vals[1].charAt(0);
+            if (task == c) {
+                antecesores.add(vals[0].charAt(0));
+            }
+
+        }
+
+        return antecesores;
     }
 
     public void mostrarModelo(BPMNModel BPMN) {
