@@ -29,6 +29,8 @@ public class Cnves extends JFrame {
     int PosX;
     int PosY;
     int radio;
+    
+    Character ElementSelected;
 
     int i = 0;
     HashMap<Character, Element> Elements;
@@ -38,7 +40,6 @@ public class Cnves extends JFrame {
     BPMNModel BPMN;
 
     public Cnves(BPMNModel bpmn, WFG wfg) {
-
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         ScreenWidth = (int) screenSize.getWidth();
         ScreenHeight = (int) screenSize.getHeight();
@@ -51,52 +52,39 @@ public class Cnves extends JFrame {
         PosX = ScreenWidth / 15;
         PosY = ScreenHeight / 20;
         radio = ScreenWidth / 30;
+        
+        ElementSelected = ' ';
 
         super.setTitle("Model");
         super.setSize(ScreenWidth, ScreenHeight);
-        super.setBackground(new java.awt.Color(197, 225, 165));
         super.setVisible(true);
         super.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.addMouseListener(new MouseListener() {
             public void mousePressed(MouseEvent me) {
-                int x = me.getX();
-                int y = me.getY();
-                System.out.println("PRESED AT: X:" + x + " Y:" + y);
+                 clickAt(me.getX(),me.getY());
             }
 
             public void mouseReleased(MouseEvent me) {
-                int x = me.getX();
-                int y = me.getY();
-                System.out.println("RELEASED AT:" + x + " Y:" + y);
+                ElementSelected = ' ';
             }
 
-            public void mouseEntered(MouseEvent me) {
+            public void mouseEntered(MouseEvent me) {}
 
-                int x = me.getX();
-                int y = me.getY();
-                System.out.println("ENTERED AT:" + x + " Y:" + y);
-            }
-
-            public void mouseExited(MouseEvent me) {
-
-            }
+            public void mouseExited(MouseEvent me) {}
 
             public void mouseClicked(MouseEvent me) {
-                int x = me.getX();
-                int y = me.getY();
-                System.out.println("X:" + x + " Y:" + y);
+                clickAt(me.getX(),me.getY());
             }
         });
         
         this.addMouseMotionListener(new MouseMotionListener(){
             @Override
             public void mouseDragged(MouseEvent e) {
-                System.out.println("Draging mouse");
+                dragElementSelected(e.getX(), e.getY());
             }
 
             @Override
-            public void mouseMoved(MouseEvent e) {
-            }
+            public void mouseMoved(MouseEvent e) {}
             
         });
     }
@@ -158,6 +146,7 @@ public class Cnves extends JFrame {
 
     @Override
     public void paint(Graphics g) {
+        super.paint(g);
         for (Map.Entry<Character, Element> entry : Elements.entrySet()) {
             Element e = entry.getValue();
             if (e.type.equals("Task")) {
@@ -179,6 +168,25 @@ public class Cnves extends JFrame {
                     g.drawLine(a.cPosX + (2 * (radio / 2)), a.cPosY + (radio / 2), e.cPosX, e.cPosY + (radio / 2));
                 }
             }
+        }
+    }
+    
+    public void clickAt(int x, int y){ //Dada una posición x, y, verificar si se dio clic a un elemento dadas sus posiciones
+        for(Map.Entry<Character, Element> entry: Elements.entrySet()){
+            Element e = entry.getValue(); //get the element
+            if( x <= (e.cPosX+radio) && y <= (e.cPosY+radio) && x >= e.cPosX && y >= e.cPosY){
+                ElementSelected = e.Name;
+                break;
+            }
+        }
+    }
+    
+    public void dragElementSelected(int x, int y){
+        System.out.println("Dragging: " + ElementSelected);
+        if(ElementSelected != ' '){
+            Elements.get(ElementSelected).cPosX = x;
+            Elements.get(ElementSelected).cPosY = y;
+            this.repaint();
         }
     }
 
