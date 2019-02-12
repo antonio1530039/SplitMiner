@@ -5,6 +5,8 @@
  */
 package splitminer;
 
+import java.util.ArrayList;
+
 /**
  *
  * @author Antonio
@@ -14,21 +16,24 @@ public class Element {
     Character Name;
     int cPosX;
     int cPosY;
-    Character Antecesor;
+    ArrayList<Character> Antecesores;
+    String type;
     
     
     public Element(){
         this.Name = ' ';
         this.cPosX = 0;
         this.cPosY = 0;
-        this.Antecesor = ' ';
+        this.type = "";
+        Antecesores = new ArrayList<>();
     }
     
     public Element(Character name){
         this.Name = name;
         this.cPosX = 0;
         this.cPosY = 0;
-        this.Antecesor = ' ';
+        this.type="";
+        Antecesores = new ArrayList<>();
     }
     
     
