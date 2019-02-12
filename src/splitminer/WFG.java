@@ -719,12 +719,17 @@ public class WFG {
         //.....................
         ///
         
-
+        /*
         JoinsFinder jf = new JoinsFinder(BPMN, this);
         
         String notation = jf.findNotation();
-        System.out.println("Notation: " + notation);
+        System.out.println("Notation: " + notation);*/
         
+        Cnves c = new Cnves(BPMN, this);
+        c.start();
+        
+
+
     }
 
 

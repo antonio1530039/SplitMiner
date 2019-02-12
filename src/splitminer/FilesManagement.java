@@ -301,11 +301,30 @@ public class FilesManagement  {
                
           //final String filename = "Event logs/Logs Reales/Sistema Electoral/electoral.csv";
 
-       final String filename = "paper.csv";
+       final String filename = "P1.txt";
 
        /*
+                [A,c] - 1
+		[A,h] - 1
+		[1,A] - 1
+		[1,b] - 1
+		[a,1] - 1
+		[B,e] - 1
+		[B,g] - 1
+		[b,B] - 1
+		[C,d] - 1
+		[C,g] - 1
+		[c,C] - 1
+		[d,f] - 1
+		[D,c] - 1
+		[D,f] - 1
+		[e,D] - 1
+		[g,d] - 1
+		[h,d] - 1
        
+     
        
+
       
        TRAZAS 3  - SALIDA SIN JOINS
                 [A,b] - 1X
