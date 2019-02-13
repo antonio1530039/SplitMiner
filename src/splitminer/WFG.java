@@ -460,11 +460,11 @@ public class WFG {
         System.out.println("\t\tDetectando joins y creando noatación...");
 
         //Lo siguiente es a manera de prueba.....................
-        
+        /*
         WFG.clear();
         
         
-        /*
+        
         //Modelo 1
         
         WFG.put("A,b", 1);
@@ -566,7 +566,7 @@ public class WFG {
         
         
         
-         
+         /*
         //Modelo 3
         WFG.put("a,b", 1);
         WFG.put("b,c", 1);
@@ -720,13 +720,12 @@ public class WFG {
         ///
         
         
-        JoinsFinder jf = new JoinsFinder(BPMN, this);
+        /*JoinsFinder jf = new JoinsFinder(BPMN, this);
         
         String notation = jf.findNotation();
-        System.out.println("Notation: " + notation);
+        System.out.println("Notation: " + notation);*/
         
-        Cnves c = new Cnves(BPMN, this);
-        c.start();
+        G_BuildGraphicModel c = new G_BuildGraphicModel(BPMN, this);
         
 
 
