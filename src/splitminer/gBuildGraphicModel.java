@@ -8,6 +8,8 @@ package splitminer;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import javax.swing.JFrame;
@@ -16,7 +18,7 @@ import javax.swing.JFrame;
  *
  * @author Antonio
  */
-public class G_BuildGraphicModel extends JFrame {
+public class gBuildGraphicModel extends JFrame {
 
     int ScreenWidth;
     int ScreenHeight;
@@ -25,11 +27,11 @@ public class G_BuildGraphicModel extends JFrame {
 
     HashMap<Character, Element> Elements;
     //Graph
-    WFG WFG;
+    LinkedHashMap<String, Integer> WFG;
     //BPMN model
     BPMNModel BPMN;
 
-    public G_BuildGraphicModel(BPMNModel bpmn, WFG wfg) {
+    public gBuildGraphicModel(BPMNModel bpmn, LinkedHashMap<String, Integer> wfg) {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         ScreenWidth = (int) screenSize.getWidth();
         ScreenHeight = (int) screenSize.getHeight();
@@ -45,47 +47,35 @@ public class G_BuildGraphicModel extends JFrame {
         buildModel();
         setTitle("Model");
         setSize(ScreenWidth, ScreenHeight);
-        add(new G_JPanel(ScreenWidth, ScreenHeight, Elements, BPMN)); //Agregar el JPanel, mandando en su contructor los elementos necesarios para la graficacion de los elementos (Elements)
+        add(new gJPanel(ScreenWidth, ScreenHeight, Elements, BPMN)); //Agregar el JPanel, mandando en su contructor los elementos necesarios para la graficacion de los elementos (Elements)
         setVisible(true);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
     }
 
     public void buildModel() {
-        HashMap<Character, Set<Character>> allSucesores = getAllSucesores();
-        for (Entry<Character, Set<Character>> entry : allSucesores.entrySet()) {
-            Character nodo = entry.getKey();
-            //Procesar nodo
-            if (!Elements.containsKey(nodo)) {
-                processElement(new Element(nodo));
+       // HashMap<Character, Set<Character>> allSucesores = getAllSucesores();
+        for (Map.Entry<String, Integer> entry : WFG.entrySet()) {
+            String vals[] = entry.getKey().split(",");
+            
+            Character actual = vals[0].charAt(0);
+            Character sucesor = vals[1].charAt(0);
+            
+            //Procesar nodo actual
+            if (!Elements.containsKey(actual)) {
+                processElement(new Element(actual));
             }
-            //Para cada sucesor del nodo, agregar sus antecesores para crear las flechas
-            for (Character s : entry.getValue()) {
-                if (!Elements.containsKey(s)) {
-                    Element sucesor = new Element(s);
-                    sucesor.Antecesores.add(nodo);
-                    processElement(sucesor);
-                } else {
-                    Elements.get(s).Antecesores.add(nodo);
-                }
-            }
+            
+            //procesar sucesor
+            if(!Elements.containsKey(sucesor)){
+                Element Esucesor = new Element(sucesor);
+                Esucesor.Antecesores.add(actual);
+                processElement(Esucesor);
+                System.out.println("Actual: " + sucesor + " antecesor: " + actual);
+            }else{
+                Elements.get(sucesor).Antecesores.add(actual);
+                System.out.println("Actual: " + sucesor + " antecesor: " + actual);
+            } 
         }
-    }
-    
-    public HashMap<Character, Set<Character>> getAllSucesores() {
-        HashMap<Character, Set<Character>> allSucesores = new HashMap<>();
-
-        for (Character c : BPMN.T) {
-            allSucesores.put(c, WFG.successors(c));
-        }
-        for (Character c : BPMN.Gxor) {
-            allSucesores.put(c, WFG.successors(c));
-        }
-        for (Character c : BPMN.Gand) {
-            allSucesores.put(c, WFG.successors(c));
-        }
-
-        System.out.println("Todos los sucesores: " + allSucesores.toString());
-        return allSucesores;
     }
 
     public void processElement(Element e) {

@@ -367,7 +367,7 @@ public class FilesManagement  {
     //final String filename = "Logs/logPREP2.csv";
    //final String filename = "Logs/seguros_exe_correcto.csv";-- revisar si tiene espacio en blanco,; o ,
       //double umbral =0.4; //descarta edges con frecuencia menor a este umbral he manejado hasta 25
-      double umbral =0.4; //descarta edges con frecuencia menor a este umbral he manejado hasta 25
+      double umbral =0; //descarta edges con frecuencia menor a este umbral he manejado hasta 25
       
       System.out.println("PASO 1: LEER TRAZAS DEL ARCHIVO DE ENTRADA '" + filename + "' E IDENTIFICAR TAREAS.");
    

@@ -19,7 +19,7 @@ import javax.swing.JPanel;
  *
  * @author Antonio
  */
-public class G_JPanel extends JPanel {
+public class gJPanel extends JPanel {
 
     int ScreenWidth;
     int ScreenHeight;
@@ -28,7 +28,7 @@ public class G_JPanel extends JPanel {
     HashMap<Character, Element> Elements;
     BPMNModel BPMN;
 
-    public G_JPanel(int width, int height, HashMap<Character, Element> elements, BPMNModel bpmn) {
+    public gJPanel(int width, int height, HashMap<Character, Element> elements, BPMNModel bpmn) {
         Elements = elements;
         ScreenWidth = width;
         ScreenHeight = height;

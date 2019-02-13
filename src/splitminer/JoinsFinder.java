@@ -37,7 +37,6 @@ public class JoinsFinder {
     }
 
     public String findNotation() {
-
         //comenzamos con la tarea inical
         Character next = BPMN.i;
         StringBuilder notation = new StringBuilder();
@@ -52,62 +51,45 @@ public class JoinsFinder {
         return notation.toString().replace(",}", "}");
     }
 
-    public Character FindNext(StringBuilder notation, Character s) {
-        //si el nodo actual es una tarea, regresamos su sucesor y terminamos
-        System.out.println("Notation: " + notation.toString() + " s: " + s);
-        if (BPMN.T.contains(s)) { //Es una tarea
-            notation.append(" " + s);
-            cloneTask.remove(s); //ELIMINAR EN LA LISTA DE TAREAS QUE ESTA TAREA YA SE CONSIDERO
-            return sucesor(s);
-        } else { //Es una compuerta
-            System.out.println(notation);
+    public void follow(StringBuilder notation, Character actual) {
+
+        if (BPMN.T.contains(actual)) {
+            notation.append(" " + actual);
+            cloneTask.remove(actual);
+            follow(notation, sucesor(actual));
+        } else {
             String type = "";
-            if (BPMN.Gand.contains(s)) {
+            if (BPMN.Gand.contains(actual)) {
                 type = "AND";
-            } else if (BPMN.Gxor.contains(s)) {
+            } else if (BPMN.Gxor.contains(actual)) {
                 type = "XOR";
-            } else if (type.equals("")) {
-                return '0';        //caso en el que no es ni compuerta ni tarea, este caso se espera que no ocurra
-            }else if(BPMN.Gor.contains(s)){
+            } else if (BPMN.Gor.contains(actual)) {
                 type = "OR";
             }
-            //se creara una notacion de compuerta
             notation.append(" " + type + "{ ");
 
-            HashMap<Character, LinkedList<Character>> vals = new HashMap<Character, LinkedList<Character>>();
-
+            //Resolver la compuerta
             LinkedList<String> ramas = new LinkedList<String>();
-
-            //explora cada rama del split, y para cada una obtiene el elemento de cierre.
-            //resolve() regresa cuando ha encontrado un nodo cierre para cada rama.
-            //en ramas, se regresan cada una de las notaciones de las ramas (string) que se encontraron, 
-            //en vals se regresan los nodos de cierre encontrados.
-            resolve(s, ramas, vals);
-            //agregar cada una de las ramas encontradas a la notacion
+            HashMap<Character, LinkedList<Character>> cierres = resolveGateway(actual, ramas);
+            //Agregar sus ramas a la notacion
             for (String rama : ramas) {
                 notation.append(rama + ",");
             }
-
             notation.append("}"); //cierre de la compuerta
-            System.out.println("\t\t\tHashMap Vals:" + vals.toString());
 
-            //Obtener lista de valores del HashMap vals
-            List<Map.Entry<Character, LinkedList<Character>>> listVals = new ArrayList(vals.entrySet());
-            if (vals.size() == 1) { //se crea un join del mismo tipo que la compuerta
-
-                //Definir el simbolo de la compuerta y agregarlo a la lista de compuertas (para no repetir simbolos)
+            //Para cada cierre, realizar la reconexion, dependiendo si es un cierre (mismo tipo de compuerta) o mas de un cierre (or)
+            if (cierres.size() == 1) { //Cierre del mismo tipo
                 Character symbol = ' ';
-                if (BPMN.Gand.contains(s)) {
+                if (BPMN.Gand.contains(actual)) {
                     symbol = (char) (BPMN.Gand.getLast() + 1);
                     BPMN.Gand.add(symbol);
-                } else if (BPMN.Gxor.contains(s)) {
+                } else if (BPMN.Gxor.contains(actual)) {
                     symbol = (char) (BPMN.Gxor.getLast() + 1);
                     BPMN.Gxor.add(symbol);
                 }
 
-                //Modificar todos los arcos definidos por cad cierre en el mapa
                 Character cierre = ' ';
-                for (Map.Entry<Character, LinkedList<Character>> entry : listVals) {
+                for (Map.Entry<Character, LinkedList<Character>> entry : cierres.entrySet()) {
                     cierre = entry.getKey(); //Recuperar cierre
                     LinkedList<Character> anteriores = entry.getValue();//Recuperar lista de los anteriores del cierre
 
@@ -115,18 +97,14 @@ public class JoinsFinder {
                         WFG.WFG.remove(a + "," + cierre); //eliminar la antigua conexion
                         WFG.WFG.put(a + "," + symbol, 1); //nueva coneccion a la compuerta
                     }
-                    System.out.println("And "+symbol+" creado");
-                    //Conectar la nueva compuerta al nodo cierre
-                    WFG.WFG.put(symbol + "," + cierre, 1);
-
+                    System.out.println("And " + symbol + " creado");
+                    WFG.WFG.put(symbol + "," + cierre, 1);//Conectar la nueva compuerta al nodo cierre
                 }
-                return cierre;//terminar la función, si todas las ramas van al mismo nodo, solo debe haber un elemento en vals
-
-            } else if (vals.size() > 1) { //se crean compuertas ors de cierre de la compuerta
+                follow(notation, cierre);
+            } else if (cierres.size() > 1) { //Cierre de Ors
                 //Modificar todos los arcos definidos por cad cierre en el mapa
-                for (Map.Entry<Character, LinkedList<Character>> entry : listVals) {
-                    //Definir el simbolo de la compuerta Or
-                    Character orSymbol;
+                for (Map.Entry<Character, LinkedList<Character>> entry : cierres.entrySet()) {
+                    Character orSymbol;//Definir el simbolo de la compuerta Or
                     if (BPMN.Gor.isEmpty()) {
                         orSymbol = '!';
                     } else {
@@ -139,14 +117,44 @@ public class JoinsFinder {
                         WFG.WFG.remove(a + "," + cierre); //eliminar la antigua conexion
                         WFG.WFG.put(a + "," + orSymbol, 1); //nueva coneccion a la compuerta
                     }
-                    System.out.println("Or "+orSymbol+" creado");
-                    //Conectar la nueva compuerta al nodo cierre
-                    WFG.WFG.put(orSymbol + "," + cierre, 1);
+                    System.out.println("Or " + orSymbol + " creado");
+                    WFG.WFG.put(orSymbol + "," + cierre, 1);//Conectar la nueva compuerta al nodo cierre
                 }
-                return '0'; //tomar alguna otra tarea cuya rama no se ha explorado
+
+                //Para cada cierre creado, llamar nuevamente a follow
+                for (Map.Entry<Character, LinkedList<Character>> entry : cierres.entrySet()) {
+                    follow(notation, entry.getKey());
+                }
             }
-            return '0';
         }
+
+    }
+
+    public HashMap<Character, LinkedList<Character>> resolveGateway(Character gate, LinkedList<String> ramas) {
+        HashSet<Character> sigs = WFG.successors(gate); //Obtener sucesores
+        HashMap<Character, LinkedList<Character>> cierres = new HashMap<>();
+        for (Character s : sigs) {
+            StringBuilder notationRama = new StringBuilder();
+            String cierre = exploreBranch(s, notationRama);
+            Character c = cierre.split(",")[0].charAt(0);
+            Character a = cierre.split(",")[1].charAt(0);
+
+            if (!cierre.equals("")) {
+                if (cierres.containsKey(c)) {
+                    LinkedList<Character> list = cierres.get(c);
+                    list.add(a);
+                    cierres.put(c, list);
+                } else {
+                    LinkedList<Character> list = new LinkedList<Character>();
+                    list.add(a);
+                    cierres.put(c, list);
+                }
+                ramas.add(notationRama.toString());
+            }
+
+        }
+        return cierres;
+        //Falta exploreBranch
 
     }
 
@@ -199,14 +207,14 @@ public class JoinsFinder {
         } else {
             //crear la notación para este nuevo segmento del grafo, hasta donde se encuentre el posible join
             cierre = FindNext(notationRama, nodo);
-            while(WFG.getNumberEdgesToA(cierre) <= 1){
+            while (WFG.getNumberEdgesToA(cierre) <= 1) {
                 s = cierre;
                 cierre = FindNext(notationRama, cierre);
-                
+
                 //if(cierre == '0' )
-                  //  cierre = cloneTask.get(0); 
+                //  cierre = cloneTask.get(0); 
             }
-            last.append(""+s);
+            last.append("" + s);
         }
         return cierre;
     }
@@ -225,6 +233,5 @@ public class JoinsFinder {
         }
         return null;
     }
-    
 
 }
