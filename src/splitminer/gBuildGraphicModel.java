@@ -10,8 +10,6 @@ import java.awt.Toolkit;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 import javax.swing.JFrame;
 
 /**
@@ -31,7 +29,7 @@ public class gBuildGraphicModel extends JFrame {
     //BPMN model
     BPMNModel BPMN;
 
-    public gBuildGraphicModel(BPMNModel bpmn, LinkedHashMap<String, Integer> wfg) {
+    public gBuildGraphicModel(BPMNModel bpmn, LinkedHashMap<String, Integer> wfg, String text) {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         ScreenWidth = (int) screenSize.getWidth();
         ScreenHeight = (int) screenSize.getHeight();
@@ -47,7 +45,7 @@ public class gBuildGraphicModel extends JFrame {
         buildModel();
         setTitle("Model");
         setSize(ScreenWidth, ScreenHeight);
-        add(new gJPanel(ScreenWidth, ScreenHeight, Elements, BPMN)); //Agregar el JPanel, mandando en su contructor los elementos necesarios para la graficacion de los elementos (Elements)
+        add(new gJPanel(ScreenWidth, ScreenHeight, Elements, BPMN, text)); //Agregar el JPanel, mandando en su contructor los elementos necesarios para la graficacion de los elementos (Elements)
         setVisible(true);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
     }
@@ -70,10 +68,8 @@ public class gBuildGraphicModel extends JFrame {
                 Element Esucesor = new Element(sucesor);
                 Esucesor.Antecesores.add(actual);
                 processElement(Esucesor);
-                System.out.println("Actual: " + sucesor + " antecesor: " + actual);
             }else{
                 Elements.get(sucesor).Antecesores.add(actual);
-                System.out.println("Actual: " + sucesor + " antecesor: " + actual);
             } 
         }
     }
@@ -90,8 +86,8 @@ public class gBuildGraphicModel extends JFrame {
         Elements.put(e.Name, e);
         PosX += ScreenWidth / 15;
         
-        if(PosX > ScreenWidth){
-            PosY += ScreenHeight / 20; //salto en caso de exceder el limite del ancho de la pantalla
+        if(PosX >= ScreenWidth - (ScreenWidth/15)){
+            PosY += ScreenHeight / 10; //salto en caso de exceder el limite del ancho de la pantalla
             PosX = ScreenWidth / 15; //posicion inicial de X
         }
             

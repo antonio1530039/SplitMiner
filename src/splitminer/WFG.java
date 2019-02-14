@@ -461,7 +461,7 @@ public class WFG {
 
         //Lo siguiente es a manera de prueba.....................
         
-        WFG.clear();
+      // WFG.clear();
         
         
        /*
@@ -497,6 +497,7 @@ public class WFG {
         /*
         Notation:  a XOR{  b, f} AND{  c, d} e
         Notation new:  a XOR{  b, f} AND{  c, d} e
+                    
 		[A,b] - 1
 		[A,f] - 1
 		[a,A] - 1
@@ -513,7 +514,7 @@ public class WFG {
        
         
         
-        
+        /*
         //Modelo 2
         WFG.put("1,b", 1);
         WFG.put("1,c", 1);
@@ -544,7 +545,9 @@ public class WFG {
         
         /*
         Notation:  a XOR{  AND{  b, c}, e} d
-        Notation:  a XOR{  AND{  b, c} d, e} d
+        Notation:   a XOR{  AND{  b, c}, e} d
+                    
+        
 		[1,b] - 1
 		[1,c] - 1
 		[A,1] - 1
@@ -608,6 +611,8 @@ public class WFG {
         BPMN.i = 'a';
         /*
         Notation:  a b c XOR{ , h} d e XOR{ , g} f
+                    
+                    
 		[a,b] - 1
 		[b,c] - 1
 		[A,h] - 1
@@ -669,6 +674,8 @@ public class WFG {
         /* 
         
         Notation:  a b XOR{  c d, h i j} e XOR{ , g} f
+
+
 		[a,b] - 1
 		[A,c] - 1
 		[A,h] - 1
@@ -686,7 +693,7 @@ public class WFG {
 		[D,f] - 1
         
         */
-    
+   
         /*
         //Modelo 5 - ciclos
         WFG.put("1,b", 1);
@@ -717,22 +724,17 @@ public class WFG {
         BPMN.T.add('e');
         BPMN.T.add('f');
         BPMN.i = 'a';
-        */
         
+        */
         
         //.....................
         ///
         
         
         JoinsFinder jf = new JoinsFinder(BPMN, this);
-        
         String notation = jf.findNotation();
         System.out.println("Notation: " + notation);
-        
-        gBuildGraphicModel c = new gBuildGraphicModel(BPMN, WFG);
-        
-
-
+        gBuildGraphicModel c = new gBuildGraphicModel(BPMN, WFG, "Model's notation: " + notation);
     }
 
 

@@ -6,6 +6,7 @@
 package splitminer;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Polygon;
 import java.awt.event.MouseEvent;
@@ -14,6 +15,8 @@ import java.awt.event.MouseMotionListener;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
 
 /**
  *
@@ -28,16 +31,24 @@ public class gJPanel extends JPanel {
     HashMap<Character, Element> Elements;
     BPMNModel BPMN;
 
-    public gJPanel(int width, int height, HashMap<Character, Element> elements, BPMNModel bpmn) {
+    public gJPanel(int width, int height, HashMap<Character, Element> elements, BPMNModel bpmn, String text) {
         Elements = elements;
         ScreenWidth = width;
         ScreenHeight = height;
         radio = ScreenWidth / 30;
         ElementSelected = ' ';
         BPMN = bpmn;
-        //super.setDoubleBuffered(true);
+        
+        JTextArea textField=new JTextArea();
+        textField.setBounds(5, 5, ScreenWidth, ScreenWidth);
+        textField.setText(text);
+        textField.setFont(textField.getFont().deriveFont(20f));
+        textField.setEditable(false);
+        add(textField);
+        
         setBackground(new Color(255, 255, 255));
         setSize(ScreenWidth, ScreenHeight);
+        
         this.addMouseListener(new MouseListener() {
             @Override
             public void mousePressed(MouseEvent me) {
@@ -78,13 +89,14 @@ public class gJPanel extends JPanel {
                 g.drawString(e.Name.toString(), e.cPosX + (radio / 2), e.cPosY + (radio / 2));
             } else {
                 g.setColor(Color.red);
-                //g.fillRoundRect(e.cPosX, e.cPosY, radio, radio, radio / 4, radio / 4); //Cambiar por rombo
                 drawDiamond(g, e.cPosX + (radio / 2), e.cPosY + (radio / 2));
                 g.setColor(Color.black);
                 if (BPMN.Gxor.contains(e.Name)) {
                     g.drawString("Xor", e.cPosX + (radio / 2) - 3, e.cPosY + (radio / 2));
-                } else {
+                } else if(BPMN.Gand.contains(e.Name)) {
                     g.drawString("And", e.cPosX + (radio / 2) - 3, e.cPosY + (radio / 2));
+                }else{
+                    g.drawString("Or", e.cPosX + (radio / 2) - 3, e.cPosY + (radio / 2));
                 }
             }
             //Dibujar lineas
@@ -92,14 +104,13 @@ public class gJPanel extends JPanel {
                 g.setColor(Color.black);
                 for (Character antecesor : e.Antecesores) {
                     Element a = Elements.get(antecesor);
-                    //g.drawLine(a.cPosX + (2 * (radio / 2)), a.cPosY + (radio / 2), e.cPosX, e.cPosY + (radio / 2));
                     drawArrowLine(g, a.cPosX + (2 * (radio / 2)), a.cPosY + (radio / 2), e.cPosX, e.cPosY + (radio / 2), ScreenWidth / 300, ScreenWidth / 300);
                 }
             }
         }
     }
 
-    public void clickAt(int x, int y) { //Dada una posición x, y, verificar si se dio clic a un elemento dadas sus posiciones
+    public void clickAt(int x, int y) { //Dada una posición x, y, verificar si se dio clic a dentro del radio de un elemento
         for (Map.Entry<Character, Element> entry : Elements.entrySet()) {
             Element e = entry.getValue(); //get the element
             if (x <= (e.cPosX + radio) && y <= (e.cPosY + radio) && x >= e.cPosX && y >= e.cPosY) {
@@ -111,7 +122,7 @@ public class gJPanel extends JPanel {
 
     public void dragElementSelected(int x, int y) {
         if (ElementSelected != ' ') {
-            Elements.get(ElementSelected).cPosX = x - (radio / 2);
+            Elements.get(ElementSelected).cPosX = x - (radio / 2); //reasignar posicion al arrastrar mouse, para que el elemento quede en el centro del cursor
             Elements.get(ElementSelected).cPosY = y - (radio / 2);
             this.repaint();
         }
