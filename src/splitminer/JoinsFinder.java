@@ -51,7 +51,7 @@ public class JoinsFinder {
         }
         notation.append(" " + type + "{ ");
         
-        ArrayList<String> paraCierre = new ArrayList<>(); //Esta lista es retornada, obtiene el anterior del o de los nuevos cierres (es utilizado en exploreBranch)
+        ArrayList<String> paraCierre = new ArrayList<>(); //Esta lista es retornada, obtiene el anterior del o de los cierres con las nuevas compuertas creadas  (es utilizado en exploreBranch)
         
         if (cierres.size() == 1) { //Cierre del mismo tipo
             Character symbol = ' ';
@@ -146,7 +146,7 @@ public class JoinsFinder {
                 notation.append(" " + nodo);
                 cloneTask.remove(nodo);
                 Character s = getSucesorOantecesor(nodo, 's');
-                if (s != null) { //si el sucesor es nulo, entonces el nodo actual es el final, por lo que se verifica .....
+                if (s != null) {
                     if (WFG.getNumberEdgesToA(s) > 1) {
                         cierres.add(s + "," + nodo);
                     } else {

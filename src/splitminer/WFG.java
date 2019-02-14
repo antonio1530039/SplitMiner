@@ -461,7 +461,7 @@ public class WFG {
 
         //Lo siguiente es a manera de prueba.....................
         
-      // WFG.clear();
+       WFG.clear();
         
         
        /*
@@ -694,7 +694,7 @@ public class WFG {
         
         */
    
-        /*
+        
         //Modelo 5 - ciclos
         WFG.put("1,b", 1);
         WFG.put("1,c", 1);
@@ -725,7 +725,7 @@ public class WFG {
         BPMN.T.add('f');
         BPMN.i = 'a';
         
-        */
+        //*/
         
         //.....................
         ///
