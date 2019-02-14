@@ -463,8 +463,8 @@ public class WFG {
         
         WFG.clear();
         
-        /*
         
+       /*
         //Modelo 1
         
         WFG.put("A,b", 1);
@@ -496,6 +496,7 @@ public class WFG {
         BPMN.i = 'a';
         /*
         Notation:  a XOR{  b, f} AND{  c, d} e
+        Notation new:  a XOR{  b, f} AND{  c, d} e
 		[A,b] - 1
 		[A,f] - 1
 		[a,A] - 1
@@ -543,6 +544,7 @@ public class WFG {
         
         /*
         Notation:  a XOR{  AND{  b, c}, e} d
+        Notation:  a XOR{  AND{  b, c} d, e} d
 		[1,b] - 1
 		[1,c] - 1
 		[A,1] - 1
@@ -722,10 +724,10 @@ public class WFG {
         ///
         
         
-        /*JoinsFinder jf = new JoinsFinder(BPMN, this);
+        JoinsFinder jf = new JoinsFinder(BPMN, this);
         
         String notation = jf.findNotation();
-        System.out.println("Notation: " + notation);*/
+        System.out.println("Notation: " + notation);
         
         gBuildGraphicModel c = new gBuildGraphicModel(BPMN, WFG);
         
