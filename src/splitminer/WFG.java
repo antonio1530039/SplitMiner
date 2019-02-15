@@ -460,7 +460,7 @@ public class WFG {
         System.out.println("\t\tDetectando joins y creando noatación...");
 
         //Lo siguiente es a manera de prueba.....................
-        
+        /*
        WFG.clear();
         
         
@@ -694,7 +694,7 @@ public class WFG {
         
         */
    
-        
+        /*
         //Modelo 5 - ciclos
         WFG.put("1,b", 1);
         WFG.put("1,c", 1);
